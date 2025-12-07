@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 
 const ExploreBtn = () => {
@@ -7,14 +8,12 @@ const ExploreBtn = () => {
     <button
       type="button"
       id="explore-btn"
-      className="mt-7 mx-auto"
-      onClick={() => {
-        console.log("clicked");
-      }}
+      className="mt-7 mx-auto "
+      
     >
-      <Link href={"#events"}>
+      <Link  href={"#events"}>
         Explore{" "}
-        <img
+        <Image
           src={"/icons/arrow-down.svg"}
           alt="arrow-down"
           width={24}
