@@ -116,7 +116,7 @@ EventSchema.index({ slug: 1 });
  * Pre-save hook to generate slug, validate and normalize date/time
  * Slug is only regenerated when title changes
  */
-EventSchema.pre('save', function (next) {
+EventSchema.pre('save', function () {
   const event = this as IEvent;
 
   // Generate URL-friendly slug from title if title is modified
@@ -134,7 +134,7 @@ EventSchema.pre('save', function (next) {
   if (event.isModified('date')) {
     const dateObj = new Date(event.date);
     if (isNaN(dateObj.getTime())) {
-      return next(new Error('Invalid date format. Please provide a valid date.'));
+      throw new Error('Invalid date format. Please provide a valid date.');
     }
     // Normalize to ISO date string (YYYY-MM-DD)
     event.date = dateObj.toISOString().split('T')[0];
@@ -144,14 +144,12 @@ EventSchema.pre('save', function (next) {
   if (event.isModified('time')) {
     const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
     if (!timeRegex.test(event.time)) {
-      return next(new Error('Invalid time format. Expected format: HH:MM (24-hour)'));
+      throw new Error('Invalid time format. Expected format: HH:MM (24-hour)');
     }
     // Ensure consistent format with leading zeros
     const [hours, minutes] = event.time.split(':');
     event.time = `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}`;
   }
-
-  next();
 });
 
 // Prevent model overwrite during hot reloading in development
