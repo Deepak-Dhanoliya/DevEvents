@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document, Model } from 'mongoose';
+import mongoose, { Schema, Document, Model } from "mongoose";
 
 // TypeScript interface for Event document
 export interface IEvent extends Document {
@@ -24,7 +24,7 @@ const EventSchema = new Schema<IEvent>(
   {
     title: {
       type: String,
-      required: [true, 'Title is required'],
+      required: [true, "Title is required"],
       trim: true,
     },
     slug: {
@@ -35,72 +35,72 @@ const EventSchema = new Schema<IEvent>(
     },
     description: {
       type: String,
-      required: [true, 'Description is required'],
+      required: [true, "Description is required"],
       trim: true,
     },
     overview: {
       type: String,
-      required: [true, 'Overview is required'],
+      required: [true, "Overview is required"],
       trim: true,
     },
     image: {
       type: String,
-      required: [true, 'Image is required'],
+      required: [true, "Image is required"],
       trim: true,
     },
     venue: {
       type: String,
-      required: [true, 'Venue is required'],
+      required: [true, "Venue is required"],
       trim: true,
     },
     location: {
       type: String,
-      required: [true, 'Location is required'],
+      required: [true, "Location is required"],
       trim: true,
     },
     date: {
       type: String,
-      required: [true, 'Date is required'],
+      required: [true, "Date is required"],
       trim: true,
     },
     time: {
       type: String,
-      required: [true, 'Time is required'],
+      required: [true, "Time is required"],
       trim: true,
     },
     mode: {
       type: String,
-      required: [true, 'Mode is required'],
+      required: [true, "Mode is required"],
       trim: true,
     },
     audience: {
       type: String,
-      required: [true, 'Audience is required'],
+      required: [true, "Audience is required"],
       trim: true,
     },
     agenda: {
       type: [String],
-      required: [true, 'Agenda is required'],
+      required: [true, "Agenda is required"],
       validate: {
         validator: function (arr: string[]) {
           return arr.length > 0;
         },
-        message: 'Agenda must contain at least one item',
+        message: "Agenda must contain at least one item",
       },
     },
     organizer: {
       type: String,
-      required: [true, 'Organizer is required'],
+      required: [true, "Organizer is required"],
       trim: true,
     },
     tags: {
       type: [String],
-      required: [true, 'Tags are required'],
+      required: [true, "Tags are required"],
       validate: {
         validator: function (arr: string[]) {
           return arr.length > 0;
         },
-        message: 'Tags must contain at least one item',
+        message: "Tags must contain at least one item",
       },
     },
   },
@@ -116,44 +116,44 @@ const EventSchema = new Schema<IEvent>(
  * Pre-save hook to generate slug, validate and normalize date/time
  * Slug is only regenerated when title changes
  */
-EventSchema.pre('save', function () {
+EventSchema.pre("save", function () {
   const event = this as IEvent;
 
   // Generate URL-friendly slug from title if title is modified
-  if (event.isModified('title')) {
+  if (event.isModified("title")) {
     event.slug = event.title
       .toLowerCase()
       .trim()
-      .replace(/[^\w\s-]/g, '') // Remove special characters
-      .replace(/\s+/g, '-') // Replace spaces with hyphens
-      .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
-      .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
+      .replace(/[^\w\s-]/g, "") // Remove special characters
+      .replace(/\s+/g, "-") // Replace spaces with hyphens
+      .replace(/-+/g, "-") // Replace multiple hyphens with single hyphen
+      .replace(/^-+|-+$/g, ""); // Remove leading/trailing hyphens
   }
 
   // Validate and normalize date to ISO format (YYYY-MM-DD)
-  if (event.isModified('date')) {
+  if (event.isModified("date")) {
     const dateObj = new Date(event.date);
     if (isNaN(dateObj.getTime())) {
-      throw new Error('Invalid date format. Please provide a valid date.');
+      throw new Error("Invalid date format. Please provide a valid date.");
     }
     // Normalize to ISO date string (YYYY-MM-DD)
-    event.date = dateObj.toISOString().split('T')[0];
+    event.date = dateObj.toISOString().split("T")[0];
   }
 
   // Validate and normalize time format (HH:MM)
-  if (event.isModified('time')) {
+  if (event.isModified("time")) {
     const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
     if (!timeRegex.test(event.time)) {
-      throw new Error('Invalid time format. Expected format: HH:MM (24-hour)');
+      throw new Error("Invalid time format. Expected format: HH:MM (24-hour)");
     }
     // Ensure consistent format with leading zeros
-    const [hours, minutes] = event.time.split(':');
-    event.time = `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}`;
+    const [hours, minutes] = event.time.split(":");
+    event.time = `${hours.padStart(2, "0")}:${minutes.padStart(2, "0")}`;
   }
 });
 
 // Prevent model overwrite during hot reloading in development
 const Event: Model<IEvent> =
-  mongoose.models.Event || mongoose.model<IEvent>('Event', EventSchema);
+  mongoose.models.Event || mongoose.model<IEvent>("Event", EventSchema);
 
 export default Event;

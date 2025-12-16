@@ -71,7 +71,6 @@ BookingSchema.index(
 /**
  * Model
  */
-const Booking =
-  models.Booking || model<IBooking>("Booking", BookingSchema);
+const Booking = models.Booking || model<IBooking>("Booking", BookingSchema);
 
 export default Booking;

@@ -31,8 +31,8 @@ export default function RootLayout({
         className={`${schibstedGrotesk.variable} ${martianMono.variable} min-h-screen antialiased`}
       >
         <NextTopLoader
-          color="#59deca"       // loader color
-          height={2}         // line thickness
+          color="#59deca" // loader color
+          height={2} // line thickness
           showSpinner={false}
           speed={200}
         />
