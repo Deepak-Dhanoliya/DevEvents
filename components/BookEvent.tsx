@@ -1,40 +1,72 @@
 "use client";
-import { useState } from "react";
 
-const BookEvent = () => {
+import { useState } from "react";
+import { createBooking } from "@/lib/actions/booking.actions";
+import posthog from "posthog-js";
+
+const BookEvent = ({
+  eventId,
+  slug,
+}: {
+  eventId: string;
+  slug: string;
+}) => {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    setTimeout(()=>{
-        setSubmitted(true)
-    },1000)
+    setLoading(true);
+    setError(null);
+
+    const res = await createBooking({ eventId, email });
+
+    setLoading(false);
+
+    if (res.success) {
+      setSubmitted(true);
+      posthog.capture("event_booked", { eventId, slug, email });
+    } else {
+      setError(res.message ?? "Booking failed");
+    }
   };
 
   return (
-    <div className="flex flex-col gap-6">
+    <div id="book-event">
       {submitted ? (
-        <p className="text-sm">Thankyou for signing up!</p>
+        <p className="text-sm text-green-600">
+          ✅ You are successfully booked!
+        </p>
       ) : (
-        <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
-          <div className="flex flex-col gap-2">
+        <form onSubmit={handleSubmit}>
+          <div>
             <label htmlFor="email">Email Address</label>
             <input
+              id="email"
               type="email"
+              required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              id="email"
               placeholder="Enter your email address"
-              className="bg-dark-200 rounded-[6px] px-5 py-2.5"
+              disabled={loading}
             />
           </div>
+
+          {error && (
+            <p className="text-sm text-red-600 mt-2">
+              ⚠️ {error}
+            </p>
+          )}
+
           <button
             type="submit"
-            className="bg-primary hover:bg-primary/90 w-full cursor-pointer items-center justify-center rounded-[6px] px-4 py-2.5 text-lg font-semibold text-black"
+            className="button-submit"
+            disabled={loading}
           >
-            Submit
+            {loading ? "Submitting..." : "Submit"}
           </button>
         </form>
       )}
