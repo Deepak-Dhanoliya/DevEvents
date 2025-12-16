@@ -3,6 +3,7 @@ import { Schibsted_Grotesk, Martian_Mono } from "next/font/google";
 import "./globals.css";
 import LightRays from "@/components/LightRays";
 import Navbar from "@/components/Navbar";
+import NextTopLoader from "nextjs-toploader";
 
 const schibstedGrotesk = Schibsted_Grotesk({
   variable: "--font-schibsted-grotesk",
@@ -29,6 +30,12 @@ export default function RootLayout({
       <body
         className={`${schibstedGrotesk.variable} ${martianMono.variable} min-h-screen antialiased`}
       >
+        <NextTopLoader
+          color="#59deca"       // loader color
+          height={2}         // line thickness
+          showSpinner={false}
+          speed={200}
+        />
         <Navbar />
 
         {/* <div className="absolute inset-0 top-0 z[-2] min-h-screen">
